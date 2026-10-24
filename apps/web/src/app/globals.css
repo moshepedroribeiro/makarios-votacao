@@ -1,0 +1,66 @@
+@import '@fontsource/barlow/400.css';
+@import '@fontsource/barlow/500.css';
+@import '@fontsource/barlow/600.css';
+@import '@fontsource/barlow-condensed/500.css';
+@import '@fontsource/barlow-condensed/600.css';
+@import '@fontsource/barlow-condensed/700.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply bg-asfalto text-tinta font-corpo antialiased;
+    font-size: 16px;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-titulo text-couro;
+    letter-spacing: 0.01em;
+  }
+  :focus-visible {
+    outline: 3px solid #c8962e;
+    outline-offset: 2px;
+  }
+  input[type='date'],
+  input[type='datetime-local'] {
+    min-height: 2.5rem;
+  }
+}
+
+@layer components {
+  /* Cartão de candidato da cédula: um patch com borda costurada. */
+  .patch {
+    @apply relative block w-full rounded-[1.75rem] bg-couro p-[6px] text-left transition-transform;
+  }
+  .patch-miolo {
+    @apply rounded-[1.4rem] border-2 border-dashed border-bordado/80 px-5 py-5;
+  }
+  .patch[data-selecionado='true'] {
+    @apply bg-bordado;
+  }
+  .patch[data-selecionado='true'] .patch-miolo {
+    @apply border-couro bg-couro;
+  }
+  .patch:active {
+    transform: scale(0.99);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@media print {
+  .nao-imprimir {
+    display: none !important;
+  }
+  html {
+    background: white;
+  }
+}

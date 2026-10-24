@@ -1,0 +1,16 @@
+{
+  "name": "makarios-votacao",
+  "private": true,
+  "description": "Sistema de votação para presidente do Motoclube Makários",
+  "workspaces": ["apps/api", "apps/web"],
+  "scripts": {
+    "dev:api": "npm run dev -w @makarios/api",
+    "dev:web": "npm run dev -w @makarios/web",
+    "build": "npm run build -w @makarios/api && npm run build -w @makarios/web",
+    "start:api": "npm run start -w @makarios/api",
+    "start:web": "npm run start -w @makarios/web",
+    "test": "npm test -w @makarios/api",
+    "demo": "npm run build -w @makarios/api && npm run demo -w @makarios/api"
+  },
+  "engines": { "node": ">=20" }
+}
