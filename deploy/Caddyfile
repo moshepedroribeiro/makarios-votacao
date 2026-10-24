@@ -1,0 +1,7 @@
+# Certificado HTTPS automático (Let's Encrypt) para o domínio do .env.
+# O DNS do domínio precisa apontar para este servidor, com as portas 80 e 443 abertas.
+{$DOMINIO} {
+	encode gzip
+	# O Caddy grava o IP real do eleitor em X-Forwarded-For; a API usa esse IP no limite de tentativas.
+	reverse_proxy web:3002
+}

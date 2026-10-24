@@ -66,7 +66,27 @@ Testes das regras e do fluxo completo: `npm test`.
 
 O descritivo previa Prisma como ORM. O código usa **better-sqlite3** com migrações SQL próprias (`apps/api/src/db/migrations.ts`), porque o Prisma não permite declarar `WITHOUT ROWID`, que é parte da garantia de sigilo. A lista de cidades fica em `regras.ts` (API) e `lib/formato.ts` (front).
 
-## Produção
+## Produção com Docker
+
+Requer Docker com Compose, um domínio apontando para o servidor e as portas 80 e 443 abertas.
+
+```bash
+cp .env.example .env        # preencha DOMINIO, JWT_SECRET (openssl rand -hex 32) e ADMIN_SENHA
+docker compose up -d --build
+```
+
+- Sobem três serviços: `caddy` (HTTPS automático com Let's Encrypt), `web` (Next) e `api` (NestJS). Só o Caddy expõe portas. Não publique a porta do `web` nem a da `api`: o limite de tentativas por IP depende do Caddy informar o IP real do eleitor.
+- O banco fica no volume `dados` (`/data/makarios.db` dentro da `api`) e sobrevive a `down`/`up` e a rebuilds. **`docker compose down -v` apaga o banco.**
+- Não escale a `api` para mais de uma réplica: as sessões de votação ficam em memória.
+- Atualizar: `docker compose up -d --build`. Logs: `docker compose logs -f api`.
+- Backup após cada eleição (seguro com a API rodando):
+
+```bash
+docker compose exec api node -e "require('better-sqlite3')('/data/makarios.db').backup('/data/backup.db').then(()=>console.log('ok'))"
+docker compose cp api:/data/backup.db ./makarios-$(date +%F).db
+```
+
+## Produção sem Docker
 
 - Rode atrás de HTTPS (por exemplo Nginx ou Caddy na frente do Next na porta 3002). Só o Next precisa ficar exposto; ele repassa `/api` para a API.
 - Defina `JWT_SECRET`, `ADMIN_SENHA` e `NODE_ENV=production`.
