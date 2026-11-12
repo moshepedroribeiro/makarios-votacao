@@ -6,6 +6,7 @@ import { Emblema } from '@/components/emblema';
 import { Aviso, Botao, Campo, Entrada } from '@/components/ui';
 import { api, mensagemDe } from '@/lib/api';
 import { dataHora, hora, mascaraCpf } from '@/lib/formato';
+import { Credito } from '@/components/credito';
 
 interface Candidato {
   id: number;
@@ -200,6 +201,9 @@ export default function Votar() {
             </Link>
           </div>
         )}
+        <footer className="mt-16">
+          <Credito className="text-center text-asfalto-claro/50" />
+        </footer>
       </div>
     </main>
   );

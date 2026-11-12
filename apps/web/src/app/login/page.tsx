@@ -7,6 +7,7 @@ import { Emblema } from '@/components/emblema';
 import { useSessao } from '@/components/sessao';
 import { Aviso, Botao, Campo, Entrada } from '@/components/ui';
 import { api, mensagemDe } from '@/lib/api';
+import { Credito } from '@/components/credito';
 
 export default function Login() {
   const router = useRouter();
@@ -55,6 +56,7 @@ export default function Login() {
             Entrar
           </Botao>
         </form>
+        <Credito className="mt-10 text-center text-tinta/50" />
       </div>
     </main>
   );

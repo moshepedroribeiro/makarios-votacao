@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Emblema } from '@/components/emblema';
 import { api } from '@/lib/api';
 import { dataHora } from '@/lib/formato';
+import { Credito } from '@/components/credito';
 
 interface Situacao {
   aberta: boolean;
@@ -64,6 +65,7 @@ export default function Inicio() {
         <Link href="/login" className="text-asfalto-claro/70 underline-offset-4 hover:text-asfalto-claro hover:underline">
           Acesso da mesa e da administração
         </Link>
+        <Credito className="mt-4 text-asfalto-claro/50" />
       </footer>
     </main>
   );

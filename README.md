@@ -28,14 +28,14 @@ Testes das regras e do fluxo completo: `npm test`.
 ## Passo a passo de uma eleição
 
 1. **Administrador → Membros:** cadastre (ou importe a planilha CSV) todos os membros full patch.
-2. **Administrador → Usuários:** crie um usuário de perfil *Mesa* para o presidente de sessão (e para os mesários), vinculado ao cadastro de membro de cada um.
-3. **Administrador → Eleições → Criar eleição:** título, início (o término é sugerido 30 minutos depois), presidente de sessão e mesários.
-4. **Candidaturas:** o administrador ou o presidente de sessão registra os candidatos. O sistema defere ou indefere na hora e mostra o motivo.
+2. **Administrador → Usuários:** crie um usuário de perfil *Mesa* para o moderador de eleição (e para os mesários), vinculado ao cadastro de membro de cada um.
+3. **Administrador → Eleições → Criar eleição:** título, início (o término é sugerido 30 minutos depois), moderador de eleição e mesários.
+4. **Candidaturas:** o administrador ou o moderador de eleição registra os candidatos. O sistema defere ou indefere na hora e mostra o motivo.
 5. **Agendar eleição:** fecha a lista de aptos. Até a abertura, a mesa ainda pode incluir quem ficou apto depois.
 6. No horário de início a votação **abre sozinha**. Cada membro acessa `/votar` no celular, entra só com o CPF e vota.
 7. **Painel da mesa:** contagem regressiva, quantos já votaram, quem falta e inclusão na lista de quem ficou apto antes da abertura.
-8. No horário de término a votação **encerra sozinha** (ou antes, pelo presidente de sessão, se todos os aptos já votaram).
-9. **Apuração** (presidente de sessão): mostra presidente e vice. Se houver empate na vaga de vice, o presidente de sessão registra quem o presidente eleito escolheu.
+8. No horário de término a votação **encerra sozinha** (ou antes, pelo moderador de eleição, se todos os aptos já votaram).
+9. **Apuração** (moderador de eleição): mostra presidente e vice. Se houver empate na vaga de vice, o moderador de eleição registra quem o presidente eleito escolheu.
 10. **PDFs:** lista de presença (ordem alfabética, sem horário e sem voto) e ata da apuração.
 
 ## Regras implementadas
@@ -66,29 +66,51 @@ Testes das regras e do fluxo completo: `npm test`.
 
 O descritivo previa Prisma como ORM. O código usa **better-sqlite3** com migrações SQL próprias (`apps/api/src/db/migrations.ts`), porque o Prisma não permite declarar `WITHOUT ROWID`, que é parte da garantia de sigilo. A lista de cidades fica em `regras.ts` (API) e `lib/formato.ts` (front).
 
-## Produção com Docker
-
-Requer Docker com Compose, um domínio apontando para o servidor e as portas 80 e 443 abertas.
-
-```bash
-cp .env.example .env        # preencha DOMINIO, JWT_SECRET (openssl rand -hex 32) e ADMIN_SENHA
-docker compose up -d --build
-```
-
-- Sobem três serviços: `caddy` (HTTPS automático com Let's Encrypt), `web` (Next) e `api` (NestJS). Só o Caddy expõe portas. Não publique a porta do `web` nem a da `api`: o limite de tentativas por IP depende do Caddy informar o IP real do eleitor.
-- O banco fica no volume `dados` (`/data/makarios.db` dentro da `api`) e sobrevive a `down`/`up` e a rebuilds. **`docker compose down -v` apaga o banco.**
-- Não escale a `api` para mais de uma réplica: as sessões de votação ficam em memória.
-- Atualizar: `docker compose up -d --build`. Logs: `docker compose logs -f api`.
-- Backup após cada eleição (seguro com a API rodando):
-
-```bash
-docker compose exec api node -e "require('better-sqlite3')('/data/makarios.db').backup('/data/backup.db').then(()=>console.log('ok'))"
-docker compose cp api:/data/backup.db ./makarios-$(date +%F).db
-```
-
-## Produção sem Docker
+## Produção
 
 - Rode atrás de HTTPS (por exemplo Nginx ou Caddy na frente do Next na porta 3002). Só o Next precisa ficar exposto; ele repassa `/api` para a API.
 - Defina `JWT_SECRET`, `ADMIN_SENHA` e `NODE_ENV=production`.
 - Faça backup de `apps/api/data/makarios.db` após cada eleição.
 - Rode uma única instância da API (as sessões de votação ficam em memória).
+
+## Docker Compose
+
+Copie `.env.example` para `.env` e preencha. O `COMPOSE_FILE` escolhe quem atende as portas 80 e 443. O banco fica no volume `api-data`.
+
+### Servidor só desta aplicação (Caddy)
+
+Com `COMPOSE_FILE=docker-compose.yml:docker-compose.caddy.yml` e o `DOMINIO` já apontado para o servidor:
+
+```bash
+docker compose up -d --build
+```
+
+### Servidor do River (`mc.riversoftware.tech`)
+
+O nginx do River continua nas portas 80 e 443. Com o DNS de `mc.riversoftware.tech` apontado para o servidor:
+
+```bash
+# 1. Na pasta do Makários: rede compartilhada e aplicação
+docker network create makarios-proxy
+docker compose up -d --build
+
+# 2. Na pasta do River (~/river): ligar o nginx à rede
+cp <pasta-do-makarios>/deploy/river/compose.override.yaml .
+# cole deploy/river/nginx-mc-http.conf dentro de http { } em nginx/nginx.conf
+docker compose up -d --force-recreate nginx
+
+# 3. Certificado (a renovação usa o mesmo caminho)
+sudo certbot certonly --webroot -w ~/river/nginx/certbot-webroot -d mc.riversoftware.tech
+
+# 4. HTTPS: cole deploy/river/nginx-mc-https.conf no mesmo http { }
+docker compose up -d --force-recreate nginx
+```
+
+**O instalador do River regenera `nginx/nginx.conf`:** depois de rodá-lo, cole os dois blocos de novo. O deploy comum, que só troca o `compose.yaml`, não afeta o `nginx.conf` nem o `compose.override.yaml`.
+
+Backup do banco:
+
+```bash
+docker compose exec api node -e "new (require('better-sqlite3'))(process.env.DATABASE_FILE).backup('data/backup.db').then(()=>process.exit(0))"
+docker compose cp api:/app/apps/api/data/backup.db ./makarios-backup.db
+```

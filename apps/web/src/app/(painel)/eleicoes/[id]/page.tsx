@@ -112,7 +112,7 @@ export default function DetalheEleicao() {
             <h2 className="text-2xl font-semibold">Mesa</h2>
             <dl className="mt-3 space-y-3 text-sm">
               <div>
-                <dt className="text-tinta/60">Presidente de sessão</dt>
+                <dt className="text-tinta/60">Moderador de eleição</dt>
                 <dd className="font-medium">{e.presidenteSessao ? `${e.presidenteSessao.nome} (${e.presidenteSessao.cidade}/${e.presidenteSessao.uf})` : 'A definir'}</dd>
               </div>
               <div>
@@ -130,7 +130,7 @@ export default function DetalheEleicao() {
                   <>
                     <p className="text-sm text-tinta/70">
                       Agendar confirma a eleição e fecha a lista de aptos. Na abertura, cada membro apto vota com o próprio CPF.
-                      {!e.presidenteSessao && ' Defina o presidente de sessão antes.'}
+                      {!e.presidenteSessao && ' Defina o moderador de eleição antes.'}
                       {deferidas.length === 0 && ' Registre ao menos um candidato deferido antes.'}
                     </p>
                     <Botao

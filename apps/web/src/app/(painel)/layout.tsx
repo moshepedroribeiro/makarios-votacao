@@ -6,6 +6,7 @@ import { useEffect } from 'react';
 import { Emblema } from '@/components/emblema';
 import { useSessao } from '@/components/sessao';
 import { Carregando } from '@/components/ui';
+import { Credito } from '@/components/credito';
 
 export default function LayoutPainel({ children }: { children: React.ReactNode }) {
   const { usuario, carregando, sair } = useSessao();
@@ -69,6 +70,9 @@ export default function LayoutPainel({ children }: { children: React.ReactNode }
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">{children}</main>
+      <footer className="mx-auto max-w-6xl px-4 pb-8 sm:px-6">
+        <Credito className="border-t border-tinta/10 pt-4 text-center text-tinta/50" />
+      </footer>
     </div>
   );
 }

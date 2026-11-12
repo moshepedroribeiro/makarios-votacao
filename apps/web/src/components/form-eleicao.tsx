@@ -107,7 +107,7 @@ export function FormEleicao({
         />
       </Campo>
       <div className="sm:col-span-2">
-        <Campo rotulo="Presidente de sessão" ajuda="Não pode ser candidato nesta eleição.">
+        <Campo rotulo="Moderador de eleição" ajuda="Não pode ser candidato nesta eleição.">
           <Selecao value={ps} onChange={(e) => setPs(e.target.value)}>
             <option value="">A definir</option>
             {membros

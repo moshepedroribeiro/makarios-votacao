@@ -72,7 +72,7 @@ export class ApuracaoService {
     return this.resultado(eleicaoId, u);
   }
 
-  /** Empate na vaga de vice: o presidente de sessão registra a escolha do presidente eleito. */
+  /** Empate na vaga de vice: o moderador de eleição registra a escolha do presidente eleito. */
   escolherVice(eleicaoId: number, candidaturaId: number, u: UsuarioLogado) {
     const e = this.eleicoes.buscarRow(eleicaoId);
     this.eleicoes.exigirPresidente(e, u);

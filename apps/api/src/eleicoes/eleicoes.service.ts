@@ -105,11 +105,11 @@ export class EleicoesService implements OnModuleInit, OnModuleDestroy {
     return null;
   }
 
-  /** Exige que o usuário seja o presidente de sessão (ou, se `admin` true, também admin). */
+  /** Exige que o usuário seja o moderador de eleição (ou, se `admin` true, também admin). */
   exigirPresidente(e: EleicaoRow, u: UsuarioLogado, aceitaAdmin = false) {
     const p = this.papel(e, u);
     if (p === 'presidente' || (aceitaAdmin && p === 'admin')) return;
-    throw new ForbiddenException('Apenas o presidente de sessão desta eleição pode fazer isso.');
+    throw new ForbiddenException('Apenas o moderador de eleição desta eleição pode fazer isso.');
   }
 
   exigirMesa(e: EleicaoRow, u: UsuarioLogado) {
@@ -273,7 +273,7 @@ export class EleicoesService implements OnModuleInit, OnModuleDestroy {
     else if (!temTempoDeColete(m.data_fechamento, e.inicio)) {
       motivos.push('não completa 3 anos de colete fechado até o início da eleição');
     }
-    if (e.presidente_sessao_id === m.id) motivos.push('é o presidente de sessão');
+    if (e.presidente_sessao_id === m.id) motivos.push('é o moderador de eleição');
     if (this.mesarioIds(e.id).includes(m.id)) motivos.push('é mesário desta eleição');
     if (!m.habilitado) motivos.push('está desabilitado (inadimplente)');
     if (!motivos.length) return null;
@@ -338,7 +338,7 @@ export class EleicoesService implements OnModuleInit, OnModuleDestroy {
     if (e.status !== 'rascunho') throw new BadRequestException('Só é possível agendar uma eleição em Rascunho.');
     this.reavaliarCandidaturas(id);
     const erros: string[] = [];
-    if (!e.presidente_sessao_id) erros.push('Defina o presidente de sessão.');
+    if (!e.presidente_sessao_id) erros.push('Defina o moderador de eleição.');
     const deferidas = this.db.get<{ n: number }>(
       `SELECT COUNT(*) n FROM candidatura WHERE eleicao_id = ? AND situacao = 'deferida'`,
       id,
@@ -446,9 +446,6 @@ export class EleicoesService implements OnModuleInit, OnModuleDestroy {
       totalAptos: c.totalAptos,
       votaram: c.votaram,
       faltam: c.faltam,
-      presidenteSessao: e.presidente_sessao_id
-        ? (this.db.get<{ nome: string }>('SELECT nome FROM membro WHERE id = ?', e.presidente_sessao_id)?.nome ?? null)
-        : null,
       meuPapel: this.papel(e, u),
     };
   }

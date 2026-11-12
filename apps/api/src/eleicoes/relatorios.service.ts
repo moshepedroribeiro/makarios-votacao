@@ -30,7 +30,7 @@ export class RelatoriosService {
   private permitir(e: EleicaoRow, u: UsuarioLogado) {
     const p = this.eleicoes.papel(e, u);
     if (p !== 'admin' && p !== 'presidente') {
-      throw new ForbiddenException('Apenas o presidente de sessão ou o administrador podem emitir os PDFs.');
+      throw new ForbiddenException('Apenas o moderador de eleição ou o administrador podem emitir os PDFs.');
     }
   }
 
@@ -52,7 +52,7 @@ export class RelatoriosService {
     doc.font('Helvetica').fontSize(10);
     doc.text(`Eleição: ${e.titulo}`);
     doc.text(`Votação online de ${dataHoraLocal(e.inicio)} até ${dataHoraLocal(e.termino)}`);
-    doc.text(`Presidente de sessão: ${ps?.nome ?? '—'}`);
+    doc.text(`Moderador de eleição: ${ps?.nome ?? '—'}`);
     doc.text(`Mesários: ${mesarios.length ? mesarios.join(', ') : 'nenhum'}`);
     doc.moveDown(0.8);
     return { ps: ps?.nome as string | undefined, mesarios };
@@ -124,6 +124,12 @@ export class RelatoriosService {
         y,
         { width: doc.page.width - doc.page.margins.left - doc.page.margins.right, align: 'center', lineBreak: false },
       );
+      doc.text(
+        'Sistema Eleitoral desenvolvido por Moisés Pedro Weizemann Ribeiro',
+        doc.page.margins.left,
+        y + 11,
+        { width: doc.page.width - doc.page.margins.left - doc.page.margins.right, align: 'center', lineBreak: false },
+      );
       doc.fillColor('#000');
       doc.page.margins.bottom = margemInferior;
     }
@@ -191,7 +197,7 @@ export class RelatoriosService {
     doc.moveDown(0.5);
     doc.fontSize(8).fillColor('#555').text('Este documento registra apenas o comparecimento. O voto é secreto e não é vinculado a nenhum membro.').fillColor('#000');
     this.assinaturas(doc, [
-      ...(ps ? [{ nome: ps, funcao: 'Presidente de sessão' }] : []),
+      ...(ps ? [{ nome: ps, funcao: 'Moderador de eleição' }] : []),
       ...mesarios.map((nome) => ({ nome, funcao: 'Mesário' })),
     ]);
     return this.finalizar(doc);
@@ -235,7 +241,7 @@ export class RelatoriosService {
     ).fillColor('#000');
     doc.text(`Apuração concluída em ${r.apuradaEm ? dataHoraLocal(r.apuradaEm) : '—'}.`);
     this.assinaturas(doc, [
-      ...(ps ? [{ nome: ps, funcao: 'Presidente de sessão' }] : []),
+      ...(ps ? [{ nome: ps, funcao: 'Moderador de eleição' }] : []),
       ...mesarios.map((nome) => ({ nome, funcao: 'Mesário' })),
       ...(r.presidente ? [{ nome: r.presidente.nome, funcao: 'Presidente eleito' }] : []),
     ]);

@@ -1,0 +1,14 @@
+# Para o servidor do River: o nginx dele continua nas portas 80 e 443 e encaminha
+# o domínio para cá. Veja deploy/river/. A rede é só do nginx e do front, para o
+# Makários não enxergar o banco do River.
+services:
+  web:
+    networks:
+      default:
+      makarios-proxy:
+        aliases:
+          - makarios-web
+
+networks:
+  makarios-proxy:
+    external: true

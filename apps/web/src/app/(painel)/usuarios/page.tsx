@@ -53,7 +53,7 @@ export default function Usuarios() {
 
   return (
     <>
-      <Titulo descricao="Acessos da administração e da mesa. O presidente de sessão e os mesários precisam de um usuário vinculado ao seu cadastro de membro; ele só vale nas eleições em que foram designados.">
+      <Titulo descricao="Acessos da administração e da mesa. O moderador de eleição e os mesários precisam de um usuário vinculado ao seu cadastro de membro; ele só vale nas eleições em que foram designados.">
         Usuários
       </Titulo>
       <div className="grid gap-6 lg:grid-cols-[1fr_22rem]">
@@ -102,7 +102,7 @@ export default function Usuarios() {
             </Campo>
             <Campo rotulo="Perfil">
               <Selecao value={form.perfil} onChange={(e) => setForm({ ...form, perfil: e.target.value })}>
-                <option value="MESA">Mesa (presidente de sessão ou mesário)</option>
+                <option value="MESA">Mesa (moderador de eleição ou mesário)</option>
                 <option value="ADMIN">Administrador</option>
               </Selecao>
             </Campo>

@@ -143,7 +143,7 @@ export class MembrosService {
     return this.paraApi(this.buscar(id), true);
   }
 
-  /** Admin, ou presidente de sessão de uma eleição ainda não encerrada. */
+  /** Admin, ou moderador de eleição de uma eleição ainda não encerrada. */
   podeAlterarHabilitacao(u: UsuarioLogado): boolean {
     if (u.perfil === 'ADMIN') return true;
     if (!u.membroId) return false;
@@ -155,7 +155,7 @@ export class MembrosService {
 
   alterarHabilitacao(id: number, habilitado: boolean, motivo: string, u: UsuarioLogado) {
     if (!this.podeAlterarHabilitacao(u)) {
-      throw new ForbiddenException('Apenas o administrador ou o presidente de sessão podem alterar a habilitação.');
+      throw new ForbiddenException('Apenas o administrador ou o moderador de eleição podem alterar a habilitação.');
     }
     if (!motivo?.trim()) throw new BadRequestException('Informe o motivo.');
     const m = this.buscar(id);

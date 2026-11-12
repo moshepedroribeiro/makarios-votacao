@@ -17,7 +17,6 @@ interface PainelMesa {
   totalAptos: number;
   votaram: number;
   faltam: { id: number; nome: string; cidade: string; uf: string }[];
-  presidenteSessao: string | null;
   meuPapel: 'admin' | 'presidente' | 'mesario';
 }
 
@@ -161,13 +160,6 @@ export default function Mesa() {
                 </Link>
               )}
             </div>
-          )}
-          {!preside && p.status === 'aberta' && (
-            <p className="mt-8 text-sm text-asfalto-claro/70">
-              {p.faltam.length === 0 ? 'Todos os aptos votaram. ' : ''}
-              Só o presidente de sessão{p.presidenteSessao ? ` (${p.presidenteSessao})` : ''} pode encerrar antes do horário, entrando com o próprio
-              usuário.
-            </p>
           )}
         </section>
 

@@ -61,7 +61,7 @@ export default function Eleicoes() {
                 <div className="min-w-0 flex-1">
                   <h2 className="text-2xl font-semibold">{e.titulo}</h2>
                   <p className="text-sm text-tinta/70">
-                    {dataHora(e.inicio)} até {dataHora(e.termino)} · presidente de sessão: {e.presidenteSessao ?? 'a definir'} ·{' '}
+                    {dataHora(e.inicio)} até {dataHora(e.termino)} · moderador de eleição: {e.presidenteSessao ?? 'a definir'} ·{' '}
                     {e.candidatos} candidato(s) deferido(s)
                   </p>
                   {e.meuPapel && PAPEL[e.meuPapel] && <p className="mt-1 text-sm font-semibold text-bordado-escuro">{PAPEL[e.meuPapel]}</p>}

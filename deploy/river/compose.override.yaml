@@ -1,0 +1,11 @@
+# Copie para ~/river/compose.override.yaml. O docker compose junta este arquivo ao
+# compose.yaml sozinho, e o deploy do River não o sobrescreve.
+services:
+  nginx:
+    networks:
+      - default
+      - makarios-proxy
+
+networks:
+  makarios-proxy:
+    external: true

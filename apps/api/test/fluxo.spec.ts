@@ -95,7 +95,7 @@ describe('Fluxo completo da eleição', () => {
     expect(h[0].motivo).toBe('Mensalidade em atraso');
   });
 
-  it('cria eleição, usuário do presidente de sessão e candidaturas', async () => {
+  it('cria eleição, usuário do moderador de eleição e candidaturas', async () => {
     const agora = Date.now();
     const r = await admin
       .post('/api/eleicoes')
@@ -120,7 +120,7 @@ describe('Fluxo completo da eleição', () => {
     expect(novo.situacao).toBe('indeferida');
     expect(novo.motivo).toContain('3 anos');
     const ps = (await presidenteSessao.post(`/api/eleicoes/${eleicaoId}/candidaturas`).send({ membroId: ids.ps }).expect(201)).body;
-    expect(ps.motivo).toContain('presidente de sessão');
+    expect(ps.motivo).toContain('moderador de eleição');
     const cal = (await presidenteSessao.post(`/api/eleicoes/${eleicaoId}/candidaturas`).send({ membroId: ids.caloteiro }).expect(201)).body;
     expect(cal.motivo).toContain('desabilitado');
     await presidenteSessao.post(`/api/eleicoes/${eleicaoId}/candidaturas`).send({ membroId: ids.a }).expect(409);
@@ -222,7 +222,7 @@ describe('Fluxo completo da eleição', () => {
     await presidenteSessao.get(`/api/eleicoes/${eleicaoId}/ata.pdf`).expect(200);
   });
 
-  it('empate na vaga de vice: aguarda e o presidente de sessão registra a escolha', async () => {
+  it('empate na vaga de vice: aguarda e o moderador de eleição registra a escolha', async () => {
     const db = app.get(DatabaseService);
     const svc = app.get(EleicoesService);
     // Nova eleição: placar A 3 (Toledo), C 1 (Cascavel), D 1 (Vilhena) → C e D empatam para vice.

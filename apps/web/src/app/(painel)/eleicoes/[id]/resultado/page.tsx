@@ -108,7 +108,7 @@ export default function PaginaResultado() {
                 Apurar votos
               </Botao>
             ) : (
-              <p className="text-sm text-tinta/70">Somente o presidente de sessão pode apurar.</p>
+              <p className="text-sm text-tinta/70">Somente o moderador de eleição pode apurar.</p>
             )}
             {podePdf && (
               <a href={`/api/eleicoes/${id}/presenca.pdf`} target="_blank" rel="noreferrer" className="inline-flex min-h-10 items-center rounded-md bg-white px-4 font-medium text-couro ring-1 ring-inset ring-asfalto-linha">
@@ -153,7 +153,7 @@ export default function PaginaResultado() {
                     </div>
                   ))}
                 </div>
-                {!preside && <p className="mt-3 text-sm text-tinta/70">Somente o presidente de sessão registra a escolha.</p>}
+                {!preside && <p className="mt-3 text-sm text-tinta/70">Somente o moderador de eleição registra a escolha.</p>}
               </div>
             ) : (
               <CartaoEleito cargo="Vice-presidente" pessoa={r.vice} criterio={CRITERIO_VICE[r.criterioVice ?? '']} />
